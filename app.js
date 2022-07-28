@@ -1,4 +1,5 @@
 // Requiring-dependencies
+require('dotenv').config()
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -30,8 +31,8 @@ const userSchema = new mongoose.Schema({
 
 });
 
-// encryption Key + encryption
-const secret = "IloveJesus";
+// encryption 
+const secret = process.env.SECRET_KEY;
 userSchema.plugin(encrypt, {
     secret: secret,
     encryptedFields: ["password"]
