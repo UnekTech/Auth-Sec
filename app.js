@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const encrypt = require("moongoose-encryption")
+const encrypt = require("mongoose-encryption")
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 // dataBase-Schema's
-const newUserSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     username: {
         type: String
     },
@@ -30,9 +30,15 @@ const newUserSchema = mongoose.Schema({
 
 });
 
+// encryption Key + encryption
+const secret = "IloveJesus";
+userSchema.plugin(encrypt, {
+    secret: secret,
+    encryptedFields: ["password"]
+});
 
-// dataBase-Model's
-const newUser = mongoose.model("newUsers", newUserSchema);
+// dataBase-Model 
+const newUser = mongoose.model("newUsers", userSchema);
 
 // Get Requests
 app.get("/", function (req, res) {
@@ -49,19 +55,18 @@ app.get("/register", function (req, res) {
 
 // Post Request
 app.post("/register", function (req, res) {
-    const newUser = new newUser({
+    const User = new newUser({
         username: req.body.username,
         password: req.body.password
     });
 
-    newUser.save(function (err) {
-            if (err) {
-                console.log(err)
-            } else {
-                res.render('secrets')
-            }
+    User.save(function (err) {
+        if (err) {
+            console.log(err)
+        } else {
+            res.render('secrets')
         }
-    );
+    });
 });
 
 app.post("/login", function (req, res) {
